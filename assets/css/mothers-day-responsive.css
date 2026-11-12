@@ -1,0 +1,121 @@
+/* за Хлебом — /mothers-day/, адаптив и печать.
+   Подключается после mothers-day.css, поэтому его правила перекрывают основные.
+   Порядок брейкпоинтов: планшет → телефон → узкий телефон. */
+/* ---------- режимы ----------
+   Полная копия правил из mothers-day.css: так порядок подключения файлов на внешний вид
+   не влияет и новые правила ниже не могут случайно перебить скрытие блоков. */
+.md:not([data-md-mode]) .md-collection,
+.md:not([data-md-mode]) .md-promo,
+.md:not([data-md-mode]) .md-howto,
+[data-md-mode="preorder"] .md-collection,
+[data-md-mode="preorder"] .md-promo,
+[data-md-mode="preorder"] .md-howto { display: block; }
+
+.md:not([data-md-mode]) .md-showcase,
+[data-md-mode="preorder"] .md-showcase { display: none; }
+
+[data-md-mode="showcase"] .md-showcase { display: block; }
+[data-md-mode="showcase"] .md-collection,
+[data-md-mode="showcase"] .md-promo,
+[data-md-mode="showcase"] .md-howto { display: none; }
+
+
+
+/* ---------- футер ----------
+   .site-footer приходит из 04-layout.css, но его адаптив там рассчитан на главную:
+   в 05-responsive.css одинокая колонка footer-social внутри одноколоночной сетки
+   растягивается на всю ширину, и две круглые ссылки уезжают за правый край.
+   Здесь тот же футер, но социальные ссылки не растягиваются. */
+.site-footer .footer-social { justify-self: start; width: max-content; }
+.site-footer .footer-inner > * { min-width: 0; }
+
+/* На главной сетку футера перестраивает 05-responsive.css (здесь он не подключён):
+   три колонки 04-layout.css на телефоне зажимают знак, меню и соцсети в узкие
+   столбцы. Повторяем те же шаги: две колонки до планшета, одна — на телефоне. */
+@media (max-width: 1080px) {
+  .site-footer .footer-inner { grid-template-columns: 1fr auto; }
+}
+@media (max-width: 900px) {
+  .site-footer .footer-inner { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* ---------- полоса с QR-кодами ----------
+   Только для большого экрана: на телефоне читатель держит в руках то самое устройство,
+   которым стал бы сканировать код. На главной это делает 05-responsive.css, здесь он
+   не подключён — правило живёт тут. */
+@media (max-width: 899.98px) {
+  .md .install { display: none; }
+}
+
+
+/* ---------- 1080: промокод перестраивается в две строки ---------- */
+@media (max-width: 1080px) {
+  .md-promo-card { grid-template-columns: auto 1fr; }
+  /* Без кода первая колонка не нужна и на планшете */
+  .md-promo-card[data-promo="none"] { grid-template-columns: 1fr; }
+  .md-promo-side { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+  /* Кнопка рядом с кодом — это строка «код + кнопка», а не колонка слева */
+  .md-promo-copy { flex: none; }
+  .md-promo-status { flex-basis: 100%; min-height: 0; }
+  .md-terms-inner { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* ---------- 900: планшет — подпись под фото в одну колонку, товары 2 + 1 ----------
+   Те же правила, что на главной для .heroA-copy и .menu-grid: фото остаётся
+   во всю ширину, подпись уходит под него. */
+@media (max-width: 900px) {
+  .md-hero-inner { grid-template-columns: 1fr; }
+  .md-hero-lead { max-width: 56ch; }
+  .md-howto-inner { grid-template-columns: 1fr; }
+  .md-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* третья карточка на всю ширину: 2 + 1, а не две колонки с дырой */
+  .md-products > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .md-products > :last-child:nth-child(odd) img { aspect-ratio: 16 / 10; }
+  /* Широкая карточка: имя читается в строку. Две строки держим резервом: иначе карточка короче двух соседних. */
+  .md-products > :last-child:nth-child(odd) h3 { min-height: 2.3em; }
+}
+
+/* ---------- 760: телефон ---------- */
+@media (max-width: 760px) {
+  .md-products { grid-template-columns: 1fr; gap: 16px; }
+  .md-products > :last-child:nth-child(odd) { grid-column: auto; }
+  .md-products > :last-child:nth-child(odd) img { aspect-ratio: 4 / 5; }
+  .md-alt-grid { grid-template-columns: 1fr; }
+  .md-promo-percent { font-size: 3.4rem; }
+}
+
+/* ---------- 560: узкий телефон ---------- */
+@media (max-width: 560px) {
+  .md-hero-title { font-size: clamp(2.2rem, 1rem + 8vw, 3rem); }
+  .md-hero-actions .btn { width: 100%; }
+  .md-hero-note { font-size: var(--t-small); }
+  .md-promo-card { grid-template-columns: 1fr; }
+  .md-promo-percent { line-height: 1; }
+  .md-promo-side { flex-direction: column; align-items: stretch; }
+  /* Код и кнопка в одну строку не помещаются: код остаётся крупным, кнопка — во всю
+     ширину, иначе она сжимается до «Скопир…» */
+  .md-promo-code-row { flex-direction: column; align-items: stretch; }
+  .md-promo-code { text-align: center; }
+  .md-promo-copy { width: 100%; }
+  .md-comment-copy { width: 100%; }
+  .md-steps li { font-size: var(--t-nav); padding-left: 40px; }
+  .md-terms-list { font-size: var(--t-nav); }
+}
+
+/* ---------- 360: совсем узко ---------- */
+@media (max-width: 360px) {
+  .brand-word { display: none; }
+  .md-promo-code { letter-spacing: .08em; }
+}
+
+/* ---------- доступность и печать ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .md * { transition: none !important; }
+  .md-product-media img { animation: none !important; }
+}
+
+@media print {
+  .site-header, .site-footer, .md .install, .md-showcase-actions .btn { display: none !important; }
+  .menu-card, .md-callout, .md-promo-card { break-inside: avoid; }
+  .md { background: #fff; }
+}

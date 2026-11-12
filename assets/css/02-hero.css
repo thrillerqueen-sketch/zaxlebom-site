@@ -1,0 +1,308 @@
+/*! за Хлебом — zaxlebom.ru
+   Part 2/4: header, hero, store badges. */
+
+/* ---------- no-JavaScript ----------
+   Icons come from a sprite injected by main.js, and the menu toggle needs JS.
+   Without JS: hide both, so nothing empty or broken is shown. */
+.no-js .nav-toggle,
+.no-js svg[aria-hidden="true"] { display: none; }
+
+/* ---------- header ----------
+   Brand is the windmill + the hand-drawn wordmark (see wordmark.svg), 18px apart.
+   Nav sits on the right edge, the outlined CTA ends the row. Both groups hug the
+   outer edges, so the header reads as two anchors, not one pile on the left. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(246, 245, 242, .82);
+  backdrop-filter: saturate(140%) blur(16px);
+  -webkit-backdrop-filter: saturate(140%) blur(16px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.site-header.is-stuck { border-bottom-color: var(--line); box-shadow: 0 6px 20px rgba(31, 26, 23, .06); }
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 26px);
+  min-height: var(--header-h);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  flex: none;
+  text-decoration: none;
+}
+.brand-mark { width: 64px; height: 63px; flex: none; }
+/* width in em-free px keeps the wordmark exactly as tall as its size claim (22px cap) */
+.brand-word { width: auto; height: 22px; display: block; }
+
+.nav { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+/* Nav used to be a 14px caps Rounded label, which sat next to 22px Sofia body copy
+   and read as a foreign voice. It is 18px Sofia now, sentence case (caps at 18
+   would be a shout, and caps only earn their place at 14 where Cyrillic needs the
+   even line). 18 keeps the header quieter than the h2s below it and clearly
+   louder than the 14px button labels beside it. */
+.nav a:not(.btn-nav-cta) {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 13px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: var(--t-nav);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background-color .18s ease, color .18s ease;
+}
+.nav a:not(.btn-nav-cta):hover { background: var(--cream-2); }
+.nav a.is-active { color: var(--orange); }
+
+.header-cta { margin-left: 22px; flex: none; }
+
+/* the same CTA as the last row of the mobile panel — a real link, kept out of
+   the tab order and the desktop bar until the menu opens */
+.btn-nav-cta { display: none; }
+
+.nav-toggle {
+  display: none;
+  margin-left: auto;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/* ---------- which hero is shown ----------
+   PREVIEW ONLY. index.html tags <html data-hero="a|b|c"> from ?hero=a|b|c.
+   B and C sit inert inside <xmp> (the browser keeps them as text, so nothing in
+   them is fetched); the script by the footer turns the chosen one into elements.
+   Once a variant is chosen: keep it as plain markup, delete the two <xmp> blocks,
+   move its rules from 06-hero-variants.css here, then delete that file, its
+   <link>, the script and the unused .heroA/.heroB/.heroC blocks in
+   05-responsive.css. */
+
+/* ---------- hero ----------
+   Shared pieces first: the section itself, the "live dot", the store badges.
+   Variant-specific rules for A live below, for B and C in 06-hero-variants.css. */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--cream);
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-lead, .heroA-lead, .heroB-lead, .heroC-lead {
+  font-size: var(--t-body);
+  line-height: var(--lead-body);
+  color: var(--muted);
+  text-wrap: pretty;
+}
+/* the hero lead is a run of paragraphs plus a list of "what else is in the app":
+   it needs a wider measure than a single lead sentence */
+.heroA-lead > p + p { margin-top: var(--gap-text); }
+.heroA-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: .25em 24px;
+  margin-top: var(--gap-text);
+  font-size: var(--t-body);
+  max-width: 34ch;
+}
+.heroA-list li { position: relative; padding-left: 16px; line-height: var(--lead-body); }
+.heroA-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+/* store badges: solid brown "plates", used wherever we ask for a download.
+   Pill, like every other control on the page. */
+.stores { display: flex; flex-wrap: wrap; gap: 12px; }
+.store {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 20px 10px 16px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  background: var(--brown);
+  color: var(--white);
+  border: 1px solid var(--brown);
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+.store:hover { transform: translateY(-2px); background: var(--brown-900); box-shadow: 0 10px 26px rgba(61, 33, 25, .22); }
+.store-text { display: flex; flex-direction: column; line-height: 1.1; }
+/* the caption is a label under a 18px Rounded name — 11.2px keeps it at the
+   "small print" step instead of fighting the name for the same weight */
+.store-text small { font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; opacity: .72; }
+.store-text strong { font-family: var(--font-display); font-size: 1.125rem; font-weight: 500; }
+
+/* ---------- A — photo first, headline underneath ----------
+   The photo is the cover: full width, 16:9 so the headline stays above the fold.
+   Under it: a letterhead grid — headline on the left, the decision on the right. */
+.heroA-figure { position: relative; margin: 0; }
+.heroA-photo {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: 62% 40%;
+}
+.heroA-figure figcaption {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 16px;
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 254, 252, .88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.heroA-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  gap: clamp(24px, 5vw, 80px);
+  align-items: start;
+  padding-block: clamp(28px, 4.4vw, 56px) clamp(34px, 5vw, 64px);
+}
+.heroA-title { font-size: var(--t-hero); }
+.heroA-line { display: block; }
+/* the second line steps in and gets the brand's one loud gesture: red under the word */
+.heroA-line-2 { padding-left: .1em; }
+.heroA-mark {
+  position: relative;
+  display: inline-block;
+  z-index: 0;
+}
+.heroA-mark::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -.05em;
+  right: -.05em;
+  bottom: .03em;
+  height: .2em;
+  border-radius: 3px 8px 5px 2px;
+  background: var(--orange);
+  transform: rotate(-.7deg);
+}
+
+.heroA-side { padding-top: .5em; }
+
+/* hero actions (the Mother's Day CTA uses this; the store badges moved to the app section) */
+.heroA-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: clamp(22px, 3vw, 30px); }
+
+/* ---------- hero carousel ----------
+   Two slides stack in one grid cell; only the active one is visible, so the section
+   height stays put when it changes. Auto-advance and the dots live in main.js. */
+.hero-carousel { position: relative; }
+.hero-slides { display: grid; }
+.hero-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  /* visibility flips after the fade-out, so the two slides cross-fade instead of the
+     old one vanishing and the background flashing through */
+  transition: opacity .55s ease, visibility 0s linear .55s;
+}
+.hero-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .55s ease, visibility 0s linear 0s;
+}
+
+/* the Mother's Day cover is a different crop: keep the cake centred */
+.heroA-photo--md { object-position: 50% 42%; }
+
+/* the Mother's Day headline: a big "Скидка 10%" with a smaller line beneath */
+.heroA-sub {
+  display: block;
+  margin-top: .12em;
+  font-size: clamp(1.35rem, 0.95rem + 1.8vw, 2.4rem);
+  line-height: 1.1;
+}
+
+/* Mother's Day dates line under the headline */
+.heroA-dates {
+  margin-top: .4em;
+  font-size: clamp(1rem, 0.85rem + 1vw, 1.4rem);
+  line-height: 1.2;
+  color: var(--muted);
+}
+
+/* countdown inside the Mother's Day CTA button */
+.md-countdown {
+  display: inline;
+  font-size: var(--t-label);
+  white-space: nowrap;
+}
+
+.hero-dots {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(56.25vw - 44px);
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+}
+.no-js .hero-dots { display: none; }
+.hero-dot {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.hero-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(31, 26, 23, .35);
+  background: rgba(255, 254, 252, .6);
+  box-shadow: 0 1px 3px rgba(31, 26, 23, .25);
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.hero-dot:hover::before { border-color: var(--orange); transform: scale(1.2); }
+.hero-dot.is-active::before { background: var(--orange); border-color: var(--orange); }
+
+@media (max-width: 900px) {
+  .hero-dots { top: calc(68.75vw - 44px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { transition: none; }
+  .hero-dot::before { transition: none; }
+}
+
+

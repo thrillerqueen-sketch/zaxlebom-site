@@ -1,0 +1,6 @@
+# за Хлебом — https://zaxlebom.ru
+# Indexing is allowed (the Tilda site had <meta robots="nofollow">, which we drop).
+User-agent: *
+Allow: /
+
+Sitemap: https://zaxlebom.ru/sitemap.xml

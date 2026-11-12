@@ -1,0 +1,133 @@
+/*! за Хлебом — zaxlebom.ru
+   Part 5/6: responsive, motion, print. */
+
+@media (max-width: 1080px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .footer-inner { grid-template-columns: 1fr auto; }
+}
+
+@media (max-width: 900px) {
+  .nav, .header-cta { display: none; }
+  .nav-toggle { display: inline-flex; }
+  /* the panel is a plain block column of rows: links first, then the CTA.
+     Block layout keeps the CTA's `order` meaningful, so it lands at the bottom
+     of the open menu instead of sitting beside the hamburger (or vanishing). */
+  .site-header.nav-open .nav {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 10px var(--gutter) 18px;
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 16px 30px rgba(31, 26, 23, .1);
+  }
+  .site-header.nav-open .nav a { display: block; padding: 13px 12px; font-size: var(--t-label); line-height: 1.2; }
+  .site-header.nav-open .nav a + a { margin-top: 2px; }
+  /* the panel ends with the CTA. It lives inside the <nav> so it stacks reliably
+     under the links; hidden and untabbable until the menu opens (see main.js).
+     `.nav .btn-nav-cta` out-specifies the row link rule above. */
+  .site-header.nav-open .nav .btn-nav-cta {
+    display: flex;
+    padding: 17px 28px;
+    margin-top: 12px;
+  }
+  /* A: photo on top, copy stacked underneath */
+  .heroA-photo { aspect-ratio: 16 / 11; }
+  .heroA-figure figcaption { font-size: .76rem; bottom: 10px; }
+  .heroA-copy { grid-template-columns: 1fr; gap: clamp(18px, 3vw, 26px); }
+  .heroA-side { padding-top: 0; }
+
+  /* B: photo first, then copy */
+  .heroB-inner { grid-template-columns: 1fr; gap: clamp(26px, 5vw, 36px); padding-block: 20px 44px; }
+  .heroB-side { order: -1; }
+  .heroB-figure::before { inset: 12px -12px -12px 12px; }
+  .heroB-photo { aspect-ratio: 4 / 3; object-position: 60% 45%; }
+
+  /* C: one column — headline, photo, then the decision */
+  .heroC-inner { grid-template-columns: 1fr; gap: 22px; padding-block: 28px 18px; }
+  .heroC-copy { display: contents; }
+  .heroC-title { order: 1; }
+  .heroC-figure { order: 2; width: 94%; margin: 0; }
+  .heroC-photo { aspect-ratio: 4 / 3; border-radius: var(--radius); }
+  .heroC-lead { order: 3; margin-top: 4px; }
+  .heroC-actions { order: 4; margin-top: 0; }
+  .heroC-caption { order: 6; }
+  .heroC-caption span { display: none; }
+
+  .app-inner { grid-template-columns: 1fr; }
+  .phones { min-height: 0; }
+  .phone { width: clamp(140px, 34vw, 200px); }
+
+  .menu-grid { grid-template-columns: repeat(2, 1fr); }
+  .shop-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; }
+}
+
+/* the QR card is for the big screen only: on a phone the reader is already holding
+   the device they would scan with, so the block is simply not there */
+@media (max-width: 899.98px) {
+  .install { display: none; }
+}
+
+/* the hero's "а ещё" list: two columns need room for the longest item, one column
+   needs none — between the two, one column reads better than ragged cells */
+@media (max-width: 760px) {
+  .heroA-list { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .brand { gap: 8px; }
+  .header-inner { gap: 10px; }
+  .cards { grid-template-columns: 1fr; }
+  .card { display: grid; grid-template-columns: 56px 1fr; column-gap: 16px; align-items: start; }
+  .card-icon { margin-bottom: 0; width: 52px; height: 52px; grid-row: span 2; }
+  .card h3 { font-size: 1.06rem; }
+
+  .chips { gap: 8px; }
+  .chip { font-size: .88rem; padding: 7px 14px; }
+  .cake-list { grid-template-columns: 1fr; }
+  .cake-call .btn-lg { width: 100%; justify-content: center; }
+
+  .store { padding: 9px 16px 9px 13px; }
+  .store-text strong { font-size: 1.02rem; }
+  .stores { gap: 10px; }
+
+  .menu-card-body { inset: auto 8px 8px; padding: 11px 13px; }
+  .menu-card-body h3 { font-size: 1rem; }
+  .menu-card-body p { font-size: .78rem; }
+
+  .shop-actions .btn { flex: 1 1 auto; }
+  .install-bar-text small { display: none; }
+  .install-bar-btn { padding: 10px 16px; }
+}
+
+@media (max-width: 360px) {
+  .brand-word { display: none; }
+  .menu-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  /* the dots sit on the photo now; lift the caption above them so they don't collide */
+  .heroA-figure figcaption { bottom: 54px; }
+}
+
+/* ---------- motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ---------- print ---------- */
+@media print {
+  .site-header, .install-bar, .install, .noscript { display: none !important; }
+  body { background: #fff; color: #000; }
+  .hero, .site-footer { background: #fff !important; color: #000 !important; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .8em; }
+}

@@ -1,0 +1,231 @@
+/*! за Хлебом — zaxlebom.ru
+   Part 3/4: sections — app showcase, menu strip, cakes. */
+
+/* ---------- generic section ---------- */
+/* Sections draw their own text colour: a light colour must never leak out of
+   `.hero` / `.install` into a light section. */
+.section { padding-block: clamp(56px, 8vw, 104px); color: var(--ink); }
+.section-head { max-width: 640px; margin-bottom: clamp(28px, 4vw, 46px); }
+.section-head-row {
+  max-width: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px 40px;
+}
+.section-head-row .section-lead { max-width: 34ch; margin-bottom: 6px; }
+.kicker {
+  margin-bottom: 10px;
+  font-size: var(--t-label);
+  font-weight: 700;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--orange);
+}
+.section-lead {
+  margin-top: 14px;
+  max-width: 50ch;
+  font-size: var(--t-body);
+  line-height: var(--lead-body);
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* ---------- why: cards ---------- */
+.why { background: var(--cream); }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.6vw, 20px);
+}
+.card {
+  padding: clamp(20px, 2.4vw, 28px);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color .2s ease, background-color .2s ease;
+}
+.card:hover { border-color: var(--line-strong); }
+.card-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  background: var(--cream-2);
+  color: var(--ink);
+}
+.card:nth-child(2) .card-icon { background: #fde3c6; color: var(--orange); }
+.card:nth-child(3) .card-icon { background: #ffe9b8; }
+.card:nth-child(4) .card-icon { background: #fbdccf; color: var(--orange); }
+.card h3 { margin-bottom: 8px; text-wrap: balance; }
+.card p { max-width: 62ch; font-size: var(--t-body); line-height: var(--lead-body); color: var(--muted); text-wrap: pretty; }
+
+/* ---------- app showcase ----------
+   The store badges live here now (moved out of the hero): this is where the page
+   argues *why* the app is worth installing. */
+.app-show {
+  background:
+    radial-gradient(70% 60% at 85% 20%, rgba(250, 177, 31, .18), transparent 70%),
+    var(--cream-2);
+}
+.app-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: clamp(28px, 5vw, 70px);
+}
+.ticks { display: grid; gap: var(--gap-text); margin-top: 22px; }
+.ticks li { display: flex; align-items: center; gap: 12px; font-size: var(--t-body); line-height: var(--lead-body); font-weight: 500; }
+.ticks svg { flex: none; color: var(--orange); }
+.app-stores { margin-top: 22px; }
+
+.phones {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  /* rotation swings the corners of both phones past the box: ~(width/2)·sin(7°) ≈ 25px
+     horizontally and ~ (height/2)·(1-cos7°) ≈ 3px vertically, plus the 14px drop. */
+  padding: 24px clamp(12px, 3vw, 32px) 20px;
+  min-height: 420px;
+}
+.phone {
+  width: clamp(150px, 19vw, 230px);
+  height: auto;
+  border-radius: 26px;
+  box-shadow: var(--shadow-2);
+  flex: none;
+}
+.phone-left { transform: rotate(-7deg) translateX(12%); z-index: 1; }
+.phone-right { transform: rotate(6deg) translateX(-12%) translateY(14px); z-index: 2; }
+/* Scroll drift: `translate` is a separate property from `transform`, so the tilt
+   above stays untouched and the two never fight over one declaration. Each phone
+   gets its own --drift (set by JS), and the pair moves in opposite directions, which
+   is what reads as depth. */
+.phone { translate: 0 var(--drift, 0px); }
+.phone-left { --drift-range: -14px; }
+.phone-right { --drift-range: 7px; }
+.phones.is-in .phone-left { animation: zh-phone-l .7s ease; }
+.phones.is-in .phone-right { animation: zh-phone-r .7s ease; }
+@keyframes zh-phone-l {
+  from { transform: rotate(-9deg) translateX(16%); }
+  to { transform: rotate(-7deg) translateX(12%); }
+}
+@keyframes zh-phone-r {
+  from { transform: rotate(8deg) translateX(-16%) translateY(18px); }
+  to { transform: rotate(6deg) translateX(-12%) translateY(14px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .phone { transition: transform .35s ease; }
+  .phones:hover .phone-left { transform: rotate(-4deg) translateX(10%); }
+  .phones:hover .phone-right { transform: rotate(3deg) translateX(-10%) translateY(8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .phone { --drift: 0px !important; }
+}
+
+/* ---------- menu strip ---------- */
+.showcase { background: var(--cream); }
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.6vw, 20px);
+}
+.menu-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--cream-2);
+  border: 1px solid var(--line);
+}
+.menu-card img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  transition: transform .45s ease;
+}
+.menu-card:hover img { transform: scale(1.05); }
+.menu-card.is-in img { animation: zh-grow .6s ease; }
+@keyframes zh-grow {
+  from { transform: scale(.94); }
+  to { transform: scale(1); }
+}
+.menu-card-body {
+  position: absolute;
+  inset: auto 10px 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 254, 252, .93);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+/* the title on a photo card: Rounded 20 against 17px Sofia caption is under 1.2x,
+   so it takes the body voice instead — the name of a category is a word you read,
+   not a headline you scan */
+.menu-card-body h3 { font-size: 1.25rem; font-family: var(--font-sans); font-weight: 700; line-height: 1.15; }
+.menu-card-body p { margin-top: 3px; font-size: var(--t-small); color: var(--muted); line-height: 1.3; }
+
+/* ---------- cakes: call us ----------
+   No photo grid here on purpose: a custom cake is a conversation, so the block
+   ends in a phone number instead of a gallery. */
+.cakes { background: var(--cream-2); }
+.cake-call { text-align: center; }
+.cake-call .section-head { max-width: 720px; margin-inline: auto; }
+/* `text-wrap: pretty` narrows a centred paragraph's own box to balance its
+   lines — and a narrower box inside a 720px column starts from the column's left
+   edge, so the text drifted 114px off centre while every line inside it was
+   centred. Centring the box itself is what puts the paragraph on the axis. */
+.cake-call .section-lead { margin-inline: auto; }
+/* the list of cakes is a list, not a headline: left-aligned items, but the pair of
+   columns is centred as a unit. Equal 1fr tracks spread the labels across the full
+   720px column, so each ~200px name sat in a 344px track: the visible gutter between
+   the two columns measured 168px of empty space. `max-content` shrinks each column to
+   its longest name, and `justify-content` centres the pair on the page axis. */
+.cake-list {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  justify-content: center;
+  gap: 8px clamp(26px, 2.6vw, 44px);
+  margin-top: 16px;
+  text-align: left;
+  font-size: var(--t-body);
+  line-height: var(--lead-body);
+  color: var(--ink);
+}
+.cake-list li { position: relative; padding-left: 18px; }
+.cake-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+/* Chips and the one «Маршрут» / store-link button share a row with 22px body copy,
+   so 14px made them look like footnotes. 17px Rounded + the pill turns them into
+   real buttons you would actually press — kept Rounded, not Sofia, because the
+   Rounded hand is what marks an element as an accent. */
+.chip {
+  padding: 16px 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.chip-x {
+  appearance: none;
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background-color .18s ease;
+}
+.chip-x:hover { color: var(--brown); border-color: var(--line-strong); background: var(--cream-2); }
+.cake-phone { margin-top: clamp(24px, 3vw, 34px); }
+

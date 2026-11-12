@@ -1,0 +1,306 @@
+/*! за Хлебом — zaxlebom.ru
+   Part 1/4: tokens, fonts, base, buttons.
+   Plain CSS, no build step. This file is @import-ed by style.css. */
+
+/* ---------- design tokens ---------- */
+:root {
+  --brown: #5a3327;
+  --brown-900: #3d2119;
+  --orange: #de573e;
+  --wheat: #f1b56c;
+  --cream: #f6f5f2;
+  --cream-2: #eeede9;
+  --ink: #1f1a17;
+  --muted: #6f6862;
+  --line: rgba(31, 26, 23, .14);
+  --line-strong: rgba(31, 26, 23, .28);
+  --beige: #f1efea;
+  --white: #fffefc;
+
+  --radius: 22px;
+  --radius-sm: 14px;
+  --radius-pill: 999px;
+  /* Depth comes from hairlines and layered planes, not from glows. Only photos
+     and the floating layers keep a shadow. */
+  --shadow-2: 0 10px 22px rgba(61, 33, 25, .12), 0 30px 60px rgba(61, 33, 25, .14);
+
+  /* Type scale. Three steps between 12 and 23, so no element jumps straight from
+     a label to body copy: --t-label (caps, kickers, footer) → --t-nav (nav,
+     phone numbers) → --t-small → --t-body (22px). --t-ui is the 14px step that
+     chips and the status chip left behind when they grew to 17/16px; it is kept
+     for any one-off small control. Headings start above body copy at 46+, which
+     is the one deliberate cliff: the scale reads as a ladder with a jump only
+     where hierarchy actually is. */
+  --t-hero: clamp(2.7rem, 1.5rem + 5.2vw, 5.4rem);
+  --t-h2: clamp(1.75rem, 1.15rem + 2.4vw, 2.9rem);
+  --t-h3: 1.15rem;
+  --t-body: 1.375rem;
+  --t-small: 1rem;
+  --t-ui: .875rem;
+  --t-label: .9rem;
+  --t-nav: 1.125rem;
+  --track-label: .1em;
+  --lead-body: 1.4;
+  --gap-text: .9em;
+
+  /* Two voices, both rounded — as the brand guide prescribes
+     (Bakery-New-Logo-Guide: «Rounded Mplus 1c — Light, Regular, Medium & Extra Bold»
+     for accents and headings, «Sofia Sans Condensed» for body).
+
+     The split is decided by contrast, not by role names: a line keeps Rounded
+     only when something at least twice its size stands next to it. h1, h2 and
+     the wordmark qualify (they sit beside 17px copy). Everything that shares a
+     line with 17px body copy — chips, nav, store addresses, the mini heading we
+     dropped — would be 1x or 1.1x and reads as a wobble, so it is Sofia.
+     Rounded/20 vs Sofia/40 is exactly 2x; Rounded/16 next to Sofia/40 is 2.5x. */
+  --font-display: 'M PLUS Rounded 1c', 'Sofia Sans Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-sans: 'Sofia Sans Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-num: 'M PLUS Rounded 1c', var(--font-sans);
+
+  --wrap: 1180px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --header-h: 88px;
+
+  /* Grain: inline SVG turbulence, tiled at 180px. Seen at 100% it should read as
+     paper tooth — not as noise, not as invisible either: .5 alpha in the tile,
+     .24 overlay, multiply. Tuned by eye at 100% zoom, not on screenshots. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+/* ---------- self-hosted fonts ----------
+   Two subsets each: cyrillic + latin. Digits live in the latin subset, so numbers
+   stay Rounded even where the cyrillic file is skipped.
+   M PLUS Rounded arrives as static files, so each weight is its own @font-face:
+   400 and 500 for both subsets. Declaring an exact weight (not a range) is what
+   stops the browser from faking a weight the file lacks — 400 is the fallback,
+   500 is what the page actually sets. */
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/mplus-rounded-1c-400-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/mplus-rounded-1c-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/mplus-rounded-1c-500-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/mplus-rounded-1c-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Sofia Sans Condensed ships as one variable file per subset: weights 400-700 */
+@font-face {
+  font-family: 'Sofia Sans Condensed';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../fonts/sofia-sans-condensed-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Condensed';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../fonts/sofia-sans-condensed-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { display: block; max-width: 100%; }
+img { height: auto; }
+
+/* Grain sits above the page background and below all content: a fixed overlay,
+   pointer-events: none, so it never blocks scrolling or text selection. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 180px 180px;
+  opacity: .24;
+  mix-blend-mode: multiply;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  /* Medium, not Regular and not ExtraBold: the brand guide allows Light /
+     Regular / Medium / ExtraBold, and 500 is the one that carries a large
+     heading without either disappearing or becoming a second wordmark. */
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -.012em;
+  /* breaks are chosen for the whole block, so a heading never leaves one word
+     alone on its last line */
+  text-wrap: balance;
+}
+h1 { font-size: var(--t-hero); line-height: 1; letter-spacing: -.03em; }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); line-height: 1.2; letter-spacing: 0; }
+p { margin: 0; }
+a { color: inherit; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+.accent { color: var(--orange); }
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.skip {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  z-index: 100;
+  background: var(--orange);
+  color: var(--white);
+  padding: 12px 18px;
+  border-radius: 0 0 var(--radius-sm) 0;
+  font-weight: 700;
+}
+.skip:focus { left: 0; outline: 3px solid var(--brown); }
+
+:where(a, button):focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- labels ----------
+   One label style for kickers, eyebrows and buttons: small, uppercase, tracked,
+   600. Uppercase gives Cyrillic a steadier line than mixed case at this size.
+   Nav is NOT a label any more — it is 18px Sofia, see 04-layout.css. */
+.label {
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+/* ---------- buttons ----------
+   Two weights only:
+     .btn-brand  outline in the ink colour, goes orange on hover (default)
+     .btn-solid  filled ink, one per section at most
+   No shadows — the outline itself is the affordance, and the only loud element
+   on the page is the photo. The only movement is a 1px lift on hover.
+
+   One shape: every button is a pill. Mixed radii made the secondary buttons look
+   like a different family (the phone number next to «Маршрут» sat in a softer box),
+   and a single shape is what the brand guide asks for. Cards, photos and panels
+   keep their own radius — the pill is for controls only.
+
+   Caps buttons are accents, and the brand guide gives accents to Rounded Mplus:
+   so «Маршрут» and the phone number come from the same hand, which is what makes
+   them read as one pair instead of two unrelated controls. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 17px 28px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-family: var(--font-display);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background-color .18s ease, transform .18s ease;
+}
+.btn-sm { padding: 12px 20px; }
+.btn-lg { padding: 20px 34px; }
+
+.btn-brand { background: transparent; color: var(--brown); border-color: var(--brown); }
+.btn-brand:hover { color: var(--orange); border-color: var(--orange); }
+
+.btn-solid { background: var(--brown); color: var(--white); border-color: var(--brown); }
+.btn-solid:hover { background: var(--brown-900); border-color: var(--brown-900); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+.btn-outline:hover { color: var(--orange); border-color: var(--orange); }
+
+/* on a dark plate: cream outline, red on hover */
+.btn-lit { background: transparent; color: var(--white); border-color: rgba(255, 249, 242, .55); }
+.btn-lit:hover { color: var(--orange); border-color: var(--orange); }
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(1px); }
+
+/* A phone number is not a label. Uppercase + tracking turned "8 800 201-57-77"
+   into a gappy stretch of shouting — here it reads as a number: sentence case,
+   Sofia 700 so it stays legible at 18 without growing wide, tabular figures so it
+   looks identical in every button on the page.
+   18px is the step *between* the 14px caps label beside it and 22px body copy:
+   a number must be easier to read than «Маршрут», but at body size it was twice
+   the width of its neighbour and the pair fell apart. */
+.btn-tel {
+  font-family: var(--font-sans);
+  font-size: var(--t-nav);
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  gap: 12px;
+}
+.btn-tel svg { flex: none; }
+
+/* An icon inside a control is part of its label, never a separate colour: it takes
+   the button's own text colour, so it flips with every .btn-* variant on hover too.
+   This is the belt to the SVGs' braces -- the symbols carry fill="currentColor", and
+   this catches any future icon that forgets it. */
+.btn svg,
+.chip svg,
+.store svg { color: inherit; }
+
+/* ---------- print ---------- */
+@media print {
+  body::after { display: none; }
+}

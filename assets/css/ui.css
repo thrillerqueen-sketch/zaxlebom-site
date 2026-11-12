@@ -1,0 +1,81 @@
+/*! за Хлебом — shared UI layer (tokens, base, buttons) for pages that do not need
+   the full landing stylesheet — currently 404.html. Keep in sync with 01-base.css. */
+
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/mplus-rounded-1c-500-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/mplus-rounded-1c-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --brown: #5a3327;
+  --brown-900: #3d2119;
+  --orange: #de573e;
+  --cream: #fbf3e7;
+  --cream-2: #f6e8d4;
+  --white: #fff9f2;
+  --ink: #5a3327;
+  --radius-sm: 14px;
+  --radius-pill: 999px;
+  --font-sans: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  --gutter: clamp(16px, 4vw, 40px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+
+h1 { margin: 0; font-weight: 500; line-height: 1.08; letter-spacing: -.01em; }
+p { margin: 0; }
+
+:where(a, button):focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* buttons: the same two weights as the main page (see 01-base.css).
+   404 has one action, so it uses the filled one. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 17px 28px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background-color .18s ease;
+}
+.btn-solid { background: var(--brown); color: var(--white); border-color: var(--brown); }
+.btn-solid:hover { background: var(--brown-900); border-color: var(--brown-900); }
+.btn-brand { background: transparent; color: var(--brown); border-color: var(--brown); }
+.btn-brand:hover { color: var(--orange); border-color: var(--orange); }

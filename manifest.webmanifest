@@ -1,0 +1,17 @@
+{
+  "name": "за Хлебом",
+  "short_name": "за Хлебом",
+  "description": "Пекарня «за Хлебом» в Тельмана и Колпино. Хлеб, торты и кофе.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#fbf3e7",
+  "theme_color": "#5a3327",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/img/logo-small.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

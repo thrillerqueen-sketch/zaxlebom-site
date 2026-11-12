@@ -1,0 +1,13 @@
+/*! за Хлебом — zaxlebom.ru — stylesheet entry point.
+
+   index.html links the six parts directly (01…06), so their URL order *is* the
+   cascade order. This file keeps the same order for anything that would rather
+   load one request: 01 base → 02 hero → 03 sections → 04 layout → 06 hero
+   variants (preview only) → 05 responsive. Delete the 06 line when the hero
+   variants are gone. */
+@import url("01-base.css");
+@import url("02-hero.css");
+@import url("03-sections.css");
+@import url("04-layout.css");
+@import url("06-hero-variants.css");
+@import url("05-responsive.css");

@@ -1,0 +1,194 @@
+/*! за Хлебом — zaxlebom.ru
+   Part 4/4: shops, install, footer, sticky bar (layout starts in 05-responsive.css). */
+
+/* ---------- shops ----------
+   One address per card. The photo used to carry a second, shorter address in a
+   pill (figcaption) while the body printed the full one directly below it, so the
+   same fact appeared twice. The pill is gone and the status tag sits in that corner
+   instead: the photo now says what the photo cannot — open or closed — and the
+   address is stated once, in the body. */
+.shops { background: var(--cream); }
+.shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.4vw, 28px); }
+.shop {
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.shop-figure { position: relative; margin: 0; }
+.shop-photo { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.shop-body { padding: clamp(18px, 2.4vw, 26px); }
+.shop-addr, .shop-time {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--t-body);
+  line-height: var(--lead-body);
+  color: var(--ink);
+}
+.shop-addr { margin-top: 0; }
+.shop-addr svg, .shop-time svg { flex: none; color: var(--orange); }
+.shop-time { color: var(--muted); }
+/* riding on the photo, bottom-left, where the old address pill was. It keeps an
+   opaque light plate: the photos are dark at that corner, and a bare green/red
+   label would lose its contrast against them. */
+.shop-figure .shop-status {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  box-shadow: 0 2px 10px rgba(31, 26, 23, .18);
+}
+.shop-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: var(--radius-pill);
+  font-size: var(--t-small);
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--cream-2);
+  color: var(--muted);
+}
+.shop-status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.shop-status.is-open { background: #e6f4e2; color: #2f7a2a; }
+.shop-status.is-open::before { box-shadow: 0 0 0 4px rgba(47, 122, 42, .16); }
+.shop-status.is-closed { background: #f7e2dd; color: #a33d28; }
+
+.shop-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+
+/* ---------- install ----------
+   Its own full-width band right after the shops: square corners, text aligned to
+   the same `.wrap` column as every other section.
+   Two QR cards only, desktop only — on a phone the header CTA and the hero
+   badges do the job, and nobody scans a code on the device they are reading. */
+.install {
+  padding: clamp(32px, 5vw, 64px) var(--gutter);
+  border-radius: 0;
+  background:
+    radial-gradient(80% 120% at 100% 0%, rgba(222, 87, 62, .2), transparent 60%),
+    var(--brown);
+  color: var(--white);
+}
+/* the card's own text colours must be set explicitly: the block sits inside the
+   light section's text colour, and `.section` deliberately re-inks its children */
+.install h2 { font-size: var(--t-h2); }
+.install h2, .install h3 { color: var(--white); }
+.install .kicker { color: var(--orange); }
+.install .section-lead { color: rgba(255, 249, 242, .72); max-width: 38ch; }
+.install-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(24px, 4vw, 56px);
+}
+.qr-grid { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 44px); }
+/* No plate, no frame: the codes are cream modules drawn straight on the brown band,
+   so the band itself is the dark half of the pair — and the quiet zone, which is why
+   the SVGs carry neither. Both files are 80px, so the two codes are one matched
+   pair even though one is 37 modules and the other 41. */
+.qr-card { display: block; }
+.qr-card a {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--white);
+  border-radius: 6px;
+}
+.qr-card img { display: block; width: 80px; height: 80px; }
+.qr-card a:focus-visible { outline: 3px solid var(--orange); outline-offset: 6px; }
+.qr-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: rgba(255, 249, 242, .78);
+  transition: color .18s ease;
+}
+.qr-card a:hover .qr-label { color: var(--white); }
+
+/* ---------- footer ---------- */
+.site-footer { background: var(--brown-900); color: rgba(255, 249, 242, .8); padding-block: clamp(36px, 5vw, 56px); }
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr auto;
+  align-items: start;
+  gap: 24px 40px;
+}
+.footer-brand { display: flex; align-items: center; gap: 14px; }
+.footer-brand > img { width: 56px; height: 56px; flex: none; }
+.footer-word { display: block; height: 20px; width: auto; }
+.footer-tag { margin-top: 6px; font-size: var(--t-small); opacity: .6; }
+.footer-nav { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: var(--t-body); }
+.footer-nav a { text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .18s ease, color .18s ease; }
+.footer-nav a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+.footer-social { display: flex; gap: 10px; }
+.footer-social a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 249, 242, .08);
+  color: var(--white);
+  transition: background-color .18s ease, color .18s ease, transform .18s ease;
+}
+.footer-social a:hover { background: var(--orange); color: var(--white); transform: translateY(-2px); }
+.footer-legal { grid-column: 1 / -1; padding-top: 18px; border-top: 1px solid rgba(255, 249, 242, .12); font-size: var(--t-label); opacity: .55; }
+
+/* ---------- sticky install bar ---------- */
+.install-bar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 0 8px 30px rgba(31, 26, 23, .22);
+  border: 1px solid var(--line);
+  transform: translateY(140%);
+  opacity: 0;
+  transition: transform .3s ease, opacity .3s ease;
+}
+.install-bar[hidden] { display: none; }
+.install-bar.is-visible { transform: translateY(0); opacity: 1; }
+.install-bar > img { flex: none; border-radius: 50%; }
+.install-bar-text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; margin-right: auto; }
+.install-bar-text strong { font-size: var(--t-body); }
+.install-bar-text small { font-size: var(--t-label); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.install-bar-close {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--cream-2);
+  color: var(--ink);
+  cursor: pointer;
+}
+.noscript {
+  padding: 16px var(--gutter);
+  background: var(--orange);
+  color: var(--white);
+  text-align: center;
+  font-weight: 600;
+}

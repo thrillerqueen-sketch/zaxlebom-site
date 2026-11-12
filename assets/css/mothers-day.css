@@ -1,0 +1,603 @@
+/*! за Хлебом — /mothers-day/ (День матери 2026)
+   Part 1/2: only what this page adds.
+   Своей дизайн-системы нет. Шапка, hero, карточки витрины, магазины приложений и
+   футер берутся из 01-base.css / 02-hero.css / 03-sections.css — теми же классами,
+   что и на главной (.site-header, .hero, .menu-card, .store, .site-footer).
+   Здесь только блоки, которых на главной нет: промокод, инструкция, альтернативы,
+   условия. Всё ограничено префиксом .md, главную страницу это не задевает. */
+
+/* Праздничный акцент: тёплый розовый из фотографий коллекции. Живёт только здесь —
+   в глобальные токены не попадает. */
+.md {
+  --md-rose: #c25a72;
+  --md-rose-soft: #f7e6e9;
+  --md-rose-line: rgba(194, 90, 114, .22);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+/* hidden должен побеждать display из наших правил. Без этой строки панель с кодом
+   (display:flex, атрибут hidden) видна без кода: пустая плашка и мёртвая кнопка. */
+.md [hidden] { display: none !important; }
+
+/* До 18 ноября — только заглушка, всё остальное скрыто.
+   UTM-метки в URL остаются, так что агентство может проверять ссылки. */
+[data-md-coming-soon] #main > :not(.md-coming-soon) { display: none; }
+.md-coming-soon {
+  display: none;
+  margin: clamp(40px, 8vw, 90px) var(--gutter);
+  padding: 30px 20px;
+  border: 1px solid var(--md-rose-line);
+  border-radius: var(--radius);
+  background: var(--md-rose-soft);
+  color: var(--md-rose);
+  text-align: center;
+  font-size: var(--t-body);
+}
+[data-md-coming-soon] .md-coming-soon { display: block; }
+
+/* .wrap и .section приходят из общих файлов; эти сокращения — только чтобы разметка
+   страницы читалась короче */
+.md-kicker {
+  margin-bottom: 10px;
+  font-size: var(--t-label);
+  font-weight: 700;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--orange);
+}
+
+.md-noscript {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--md-rose-soft);
+  font-size: var(--t-body);
+}
+
+/* ---------- hero ----------
+   Фото — как на главной: во всю ширину, без скруглений и теней (.heroA-photo).
+   Под ним — та же сетка заголовок/описание, что у .heroA-copy. */
+.md-hero figure { margin: 0; }
+.md-hero .md-hero-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  object-position: 50% 45%;
+}
+.md-hero-inner { display: grid; }
+
+.md-hero-title {
+  font-family: var(--font-display);
+  font-size: var(--t-hero);
+  line-height: 1.02;
+  letter-spacing: -.015em;
+  color: var(--brown);
+}
+/* Один акцент в заголовке — красная подчёркивающая линия, как слово «пекарня»
+   на главной (.heroA-mark). Тот же приём, не второй его вариант. */
+.md-mark { position: relative; display: inline-block; z-index: 0; }
+.md-mark::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -.05em;
+  right: -.05em;
+  bottom: .03em;
+  height: .2em;
+  border-radius: 3px 8px 5px 2px;
+  background: var(--orange);
+  transform: rotate(-.7deg);
+}
+
+.md-hero-lead {
+  max-width: 34ch;
+  font-size: var(--t-body);
+  line-height: var(--lead-body);
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.md-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: clamp(22px, 3vw, 30px);
+}
+.md-hero-note { font-size: var(--t-nav); color: var(--muted); }
+.md-hero-note strong { color: var(--md-rose); font-weight: 700; }
+
+/* ---------- карточки коллекции ----------
+   Три колонки, как у витрины на главной, но подпись стоит ПОД фото,
+   а не поверх него: на планшете плашка закрывала 40-60% снимка. */
+.md-products { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* Сетка тянет карточки строки до одной высоты, но их содержимое раньше не росло вместе
+   с карточкой: у карточек с коротким заголовком снизу просвечивал серый фон и кнопки
+   стояли на разной высоте. Делаем карточку колонкой, а тело растягиваем (flex: 1 1 auto
+   ниже) — белый фон доходит до низа, кнопка (margin-top: auto) прижата к низу у всех. */
+.md-products .menu-card--product { display: flex; flex-direction: column; overflow: clip; }
+
+/* Контейнер фото обрезает увеличенный снимок: раньше zoom вылезал вниз и ложился
+   на имя десерта. overflow: clip сохраняет обрезку, но не создаёт вложенную область
+   прокрутки, чтобы view() отслеживал прокрутку страницы. */
+.md-product-media {
+  position: relative;
+  overflow: clip;
+  border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+}
+.md-product-media img { display: block; width: 100%; }
+.md-products .menu-card img { aspect-ratio: 4 / 5; }
+.md-products .menu-card.is-in img { animation: none; }
+
+@supports (animation-timeline: view()) {
+  .md-products .menu-card .md-product-media img {
+    animation: md-product-scroll-zoom 1s linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+  @keyframes md-product-scroll-zoom {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+}
+
+.md-products .md-product-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 2px;
+  padding: 16px 18px 18px;
+  background: var(--white);
+}
+/* Имя — не подпись под фото, а то, что выбирают: на шаг крупнее витрины (1.25rem)
+   и в две строки максимум, чтобы три карточки стояли одной высоты. */
+.md-products .md-product-body h3 {
+  font-size: 1.3rem;
+  line-height: 1.15;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Метка «по промокоду»: без неё покупатель прочтёт цену как обычную. */
+.menu-card-note {
+  margin-top: 8px;
+  font-size: var(--t-label);
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--md-rose);
+}
+
+/* Цена со скидкой: старая — зачёркнутая и тише, новая — крупнее и цветом акцента.
+   align-items: baseline держит обе на одной строке, что бы ни случилось с шрифтом. */
+.menu-card-prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+  margin-top: 2px;
+}
+.menu-card-price {
+  font-family: var(--font-num);
+  font-size: 1.45rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--md-rose);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.menu-card-price-old {
+  font-family: var(--font-num);
+  font-size: var(--t-nav);
+  line-height: 1.2;
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Вес — справочная строка: она нужна (торт на 1 кг или на 300 г — это выбор),
+   но не должна спорить с ценой, поэтому мельче и серым. */
+.menu-card-weight {
+  margin-top: 2px;
+  margin-bottom: 14px;
+  font-size: var(--t-small);
+  line-height: 1.3;
+  color: var(--muted);
+}
+.menu-card-cta { width: 100%; margin-top: auto; }
+
+/* ---------- подпись под фото ----------
+   Раскладка повторяет .heroA-copy с главной: заголовок слева, описание справа,
+   на планшете и телефоне — в одну колонку. */
+.md-hero-inner {
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  gap: clamp(18px, 5vw, 80px);
+  align-items: start;
+  padding-block: clamp(24px, 4.4vw, 56px) clamp(30px, 5vw, 64px);
+}
+
+/* ---------- промокод ----------
+   Два состояния, и они разные по смыслу, поэтому и выглядят по-разному:
+     data-promo="none"  — кода нет: крупной цифры нет, только текст и телефон;
+     data-promo="ready" — код есть: −10%, панель с кодом и кнопкой копирования.
+   data-promo="copied" — то же, что ready, плюс подтверждение в статусе. */
+.md-promo { padding-block: clamp(8px, 2vw, 16px) clamp(40px, 6vw, 80px); }
+.md-promo-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
+  padding: clamp(20px, 3.4vw, 40px);
+  border: 2px dashed var(--md-rose);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #fffaf9, var(--md-rose-soft));
+}
+/* Без кода первая колонка не нужна: текст занимает всю ширину блока. */
+.md-promo-card[data-promo="none"] { grid-template-columns: 1fr; }
+.md-promo-card[data-promo="none"] .md-promo-percent { display: none; }
+
+.md-promo-percent {
+  font-family: var(--font-num);
+  font-size: clamp(3rem, 1.8rem + 4.6vw, 5.6rem);
+  font-weight: 500;
+  line-height: .9;
+  letter-spacing: -.03em;
+  color: var(--md-rose);
+  white-space: nowrap;
+}
+.md-promo-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 1rem + 1.2vw, 1.9rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--brown);
+}
+.md-promo-text { margin-top: 10px; max-width: 56ch; font-size: var(--t-body); line-height: 1.4; color: var(--ink); }
+.md-promo-hint { margin-top: 8px; max-width: 56ch; font-size: var(--t-small); color: var(--muted); }
+
+.md-promo-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  border: 1px solid var(--md-rose-line);
+}
+.md-promo-label {
+  font-size: var(--t-label);
+  font-weight: 700;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* Код и кнопка — одна строка: копируют сразу, без поиска кнопки под панелью.
+   Колонка остаётся запасным вариантом на узком телефоне (см. адаптив). */
+.md-promo-code-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+/* Кириллический код: крупно, с разрядкой и tabular-цифрами, выделяется как купон. */
+.md-promo-code {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem);
+  font-weight: 500;
+  letter-spacing: .14em;
+  line-height: 1.2;
+  color: var(--brown);
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--md-rose-soft);
+}
+.md-promo-copy { flex: none; }
+.md-promo-status {
+  min-height: 1.2em;
+  font-size: var(--t-small);
+  font-weight: 600;
+  color: var(--md-rose);
+}
+
+/* ---------- инструкция ---------- */
+.md-howto { background: var(--cream-2); }
+.md-howto-inner {
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  align-items: start;
+  gap: clamp(20px, 4vw, 56px);
+}
+.md-steps {
+  counter-reset: md-step;
+  display: grid;
+  gap: 12px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.md-steps li {
+  position: relative;
+  padding-left: 46px;
+  font-size: var(--t-body);
+  line-height: 1.4;
+}
+.md-steps li::before {
+  counter-increment: md-step;
+  content: counter(md-step);
+  position: absolute;
+  left: 0;
+  /* Кружок ровно в первую строку и масштабируется вместе со шрифтом:
+     font-size .7em от строки, а 2em кружка = 1.4em строки = line-height.
+     top: 0 — поэтому верх кружка совпадает с верхом первой строки. */
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 2em;
+  height: 2em;
+  line-height: 1;
+  border-radius: 50%;
+  background: var(--brown);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: .7em;
+  font-weight: 500;
+}
+/* Визуальный акцент: покупатель не должен пропустить, что дату пишут в комментарии. */
+.md-callout {
+  /* На десктопе образец прижат к низу текста слева (в одну колонку не влияет). */
+  align-self: end;
+  padding: clamp(20px, 2.6vw, 28px);
+  border-radius: var(--radius);
+  border-left: 6px solid var(--md-rose);
+  background: var(--white);
+  box-shadow: 0 10px 24px rgba(61, 33, 25, .08);
+}
+.md-callout-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--brown);
+}
+/* Образец комментария выглядит как поле ввода, а не как абзац: то же самое человек
+   увидит в приложении, и сразу понятно, что копировать. */
+.md-comment {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--md-rose-line);
+  background: var(--cream);
+  font-size: var(--t-nav);
+  line-height: 1.45;
+  color: var(--ink);
+}
+.md-comment-copy { margin-top: 14px; }
+
+/* ---------- режимы ----------
+   Режим выставляет <html data-md-mode> ещё до первой отрисовки: скрипт в <head> считает
+   дату, mothers-day.js уточняет её ещё раз после загрузки. Здесь только внешний вид.
+   Правила пишем явно для каждого режима и полным набором (.md:not([data-md-mode]) — это
+   0,2,0 специфичности: сами по себе .md-collection или .section не перебьют его),
+   поэтому файл можно подключать в любом порядке после mothers-day.css.
+   Атрибута нет только при отключённом JS — тогда показываем предзаказ: это безопаснее,
+   чем пустая страница без товаров. */
+.md:not([data-md-mode]) .md-collection,
+.md:not([data-md-mode]) .md-promo,
+.md:not([data-md-mode]) .md-howto,
+[data-md-mode="preorder"] .md-collection,
+[data-md-mode="preorder"] .md-promo,
+[data-md-mode="preorder"] .md-howto { display: block; }
+
+.md:not([data-md-mode]) .md-showcase,
+[data-md-mode="preorder"] .md-showcase { display: none; }
+
+[data-md-mode="showcase"] .md-showcase { display: block; }
+
+[data-md-mode="showcase"] .md-collection,
+[data-md-mode="showcase"] .md-promo,
+[data-md-mode="showcase"] .md-howto { display: none; }
+
+.md-showcase { background: var(--cream-2); }
+.md-showcase-card {
+  padding: clamp(24px, 4vw, 48px);
+  border-radius: var(--radius);
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+.md-showcase-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+  margin-top: 26px;
+}
+.md-showcase-note { font-size: var(--t-body); color: var(--muted); }
+.md-showcase-note a { color: var(--brown); font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--md-rose-line); }
+.md-showcase-note a:hover { border-bottom-color: var(--md-rose); }
+
+/* ---------- альтернативные способы ---------- */
+.md-alt { background: var(--cream); }
+.md-alt-grid {
+  display: grid;
+  /* minmax(0, 1fr), а не 1fr: кнопка с номером не переносится, и колонка с ней
+     раздувается шире остальных, если разрешить трекам расти по содержимому */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+}
+.md-alt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: clamp(18px, 2.4vw, 26px);
+  border-radius: var(--radius);
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+.md-alt-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--brown);
+}
+.md-alt-text { font-size: var(--t-nav); line-height: 1.45; color: var(--muted); }
+/* Карточка с телефоном выравнивается с карточкой пекарен: текст сверху, кнопка
+   прижата к низу (margin-top: auto) и растянута на всю ширину. */
+.md-alt-phone .btn-tel { width: 100%; margin-top: auto; font-size: 1.05rem; padding-inline: 18px; }
+
+.md-bakery-list {
+  display: grid;
+  gap: 8px;
+  margin: auto 0 0;
+  padding: 0;
+  list-style: none;
+}
+.md-bakery {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: var(--t-nav);
+  transition: background-color .18s ease, color .18s ease;
+}
+.md-bakery:hover { background: var(--md-rose-soft); color: var(--brown); }
+.md-bakery svg { flex: none; margin-top: 3px; color: var(--orange); }
+.md-bakery small { display: block; font-size: var(--t-small); color: var(--muted); }
+
+/* ---------- условия ---------- */
+.md-terms { background: var(--cream-2); }
+.md-terms-inner {
+  display: grid;
+  grid-template-columns: .7fr 1.3fr;
+  gap: clamp(20px, 4vw, 56px);
+  align-items: start;
+}
+.md-terms-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--t-body);
+  line-height: 1.4;
+}
+.md-terms-list li {
+  position: relative;
+  padding-left: 22px;
+}
+.md-terms-list li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  /* Половина line-height 1.4 = .7em, минус половина кружка 9 px — точка встаёт
+     по центру первой строки, а не ниже её. */
+  top: calc(0.7em - 4.5px);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--md-rose);
+}
+
+/* ---------- полоса установки и подвал ---------- */
+
+/* .install / .qr-* приходят из 04-layout.css без изменений: полоса та же, что на главной.
+   Раздел .section даёт ей свои отступы и светлый фон, поэтому отступы и скругление
+   возвращаем к значениям главной — иначе коричневая полоса не дотянется до подвала. */
+.md .install {
+  padding: clamp(32px, 5vw, 64px) var(--gutter);
+  border-radius: 0;
+}
+.md .install .section-head { max-width: none; margin-bottom: 0; }
+
+/* футер — .site-footer / .footer-* из 04-layout.css, как на главной.
+   Отличие одно: знак с надписью — ссылка на главную, поэтому у неё надо снять
+   подчёркивание и вернуть цвета текста (иначе ::after печати и hover красят её). */
+.footer-brand {
+  text-decoration: none;
+  color: inherit;
+  width: max-content;
+  max-width: 100%;
+}
+.footer-brand:hover .footer-word { opacity: .85; }
+.footer-brand-text { display: block; min-width: 0; }
+
+/* ---------- окно выбора после «Заказать в приложении» ----------
+   <dialog> центрируется и затемняет фон сам (showModal + ::backdrop), поэтому здесь
+   только внешний вид карточки. Кнопки — столбиком на всю ширину: три варианта
+   читаются как один список, а не как три кнопки разной длины. */
+.md-dialog {
+  width: min(420px, calc(100vw - 2 * var(--gutter)));
+  max-width: 420px;
+  max-height: calc(100vh - 2 * var(--gutter));
+  margin: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+}
+.md-dialog::backdrop {
+  background: rgba(31, 26, 23, .55);
+  backdrop-filter: blur(2px);
+}
+.md-dialog[open] { animation: md-dialog-in .18s ease; }
+@keyframes md-dialog-in {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+.md-dialog-card {
+  position: relative;
+  padding: clamp(22px, 4vw, 30px);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-2);
+}
+.md-dialog-title {
+  padding-right: 44px; /* место под крестик */
+  font-size: clamp(1.25rem, 1rem + 1.2vw, 1.5rem);
+  line-height: 1.15;
+  color: var(--brown);
+}
+.md-dialog-lead {
+  margin-top: 8px;
+  font-size: var(--t-nav);
+  line-height: 1.4;
+  color: var(--muted);
+}
+.md-dialog-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--cream-2);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color .18s ease, color .18s ease;
+}
+.md-dialog-close:hover { background: var(--md-rose-soft); color: var(--brown); }
+.md-dialog-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+.md-dialog-actions .btn { width: 100%; }
+/* Фолбэк на случай, если showModal недоступен: окно прибито по центру своим
+   position:fixed — без затемнения, но не в потоке документа. */
+.md-dialog[open]:not(:modal) {
+  position: fixed;
+  inset: 0;
+  height: max-content;
+  z-index: 80;
+}
