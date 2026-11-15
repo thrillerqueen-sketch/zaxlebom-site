@@ -302,12 +302,12 @@
   window.setInterval(renderStatus, 60 * 1000);
 
   /* ---------- 11. hero carousel ----------
-     Auto-advances the hero slides; the dots (and swipe) are the manual control.
-     Pauses on keyboard focus inside (and while the finger is down for a swipe), and is skipped entirely under
-     reduced motion. Inactive slides are visibility:hidden through CSS, so they are
-     already out of the tab order; JS also marks them inert + aria-hidden. */
+     Автопрокрутка, кнопки-точки и свайп управляют лентой слайдов.
+     При фокусе или касании таймер останавливается; при reduced motion автопрокрутки нет.
+     Неактивные слайды исключены из фокуса атрибутом inert и скрыты от скринридера. */
   var carousel = doc.querySelector('[data-carousel]');
   if (carousel) {
+    var slidesTrack = carousel.querySelector('.hero-slides');
     var slides = carousel.querySelectorAll('.hero-slide');
     var dots = carousel.querySelectorAll('.hero-dot');
     var slideIndex = 0;
@@ -316,8 +316,9 @@
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function showSlide(n) {
-      if (!slides.length) return;
+      if (!slides.length || !slidesTrack) return;
       slideIndex = (n + slides.length) % slides.length;
+      slidesTrack.style.transform = 'translateX(-' + (slideIndex * 100) + '%)';
       for (var i = 0; i < slides.length; i++) {
         var on = i === slideIndex;
         slides[i].classList.toggle('is-active', on);
@@ -356,6 +357,10 @@
       var dx = e.changedTouches[0].clientX - touchX;
       touchX = null;
       if (Math.abs(dx) > 45) { showSlide(slideIndex + (dx < 0 ? 1 : -1)); }
+      startAuto();
+    }, { passive: true });
+    carousel.addEventListener('touchcancel', function () {
+      touchX = null;
       startAuto();
     }, { passive: true });
 

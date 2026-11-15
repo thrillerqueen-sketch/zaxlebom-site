@@ -1,4 +1,4 @@
-/*! за Хлебом — /mothers-day/ (День матери 2026)
+/*! за Хлебом — /mothers-day/ (День мамы 2026)
    Part 1/2: only what this page adds.
    Своей дизайн-системы нет. Шапка, hero, карточки витрины, магазины приложений и
    футер берутся из 01-base.css / 02-hero.css / 03-sections.css — теми же классами,
@@ -35,6 +35,13 @@
   font-size: var(--t-body);
 }
 [data-md-coming-soon] .md-coming-soon { display: block; }
+
+html[data-md-coming-soon] body.md {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+html[data-md-coming-soon] body.md > #main { flex: 1 0 auto; }
 
 /* .wrap и .section приходят из общих файлов; эти сокращения — только чтобы разметка
    страницы читалась короче */
@@ -364,10 +371,38 @@
   font-weight: 500;
   color: var(--brown);
 }
+.md-comment-fields {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+.md-comment-field {
+  display: grid;
+  gap: 6px;
+  font-size: var(--t-small);
+  font-weight: 600;
+  color: var(--brown);
+}
+.md-comment-field select,
+.md-comment-field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--md-rose-line);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+}
+.md-comment-field select:focus-visible,
+.md-comment-field input:focus-visible {
+  outline: 2px solid var(--md-rose);
+  outline-offset: 2px;
+}
 /* Образец комментария выглядит как поле ввода, а не как абзац: то же самое человек
    увидит в приложении, и сразу понятно, что копировать. */
 .md-comment {
-  margin-top: 14px;
+  margin-top: 18px;
   padding: 14px 16px;
   border-radius: var(--radius-sm);
   border: 1px dashed var(--md-rose-line);
@@ -377,6 +412,7 @@
   color: var(--ink);
 }
 .md-comment-copy { margin-top: 14px; }
+.md-comment-copy:disabled { opacity: .55; cursor: not-allowed; }
 
 /* ---------- режимы ----------
    Режим выставляет <html data-md-mode> ещё до первой отрисовки: скрипт в <head> считает

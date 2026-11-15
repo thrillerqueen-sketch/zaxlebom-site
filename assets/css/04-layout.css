@@ -90,20 +90,18 @@
   gap: clamp(24px, 4vw, 56px);
 }
 .qr-grid { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 44px); }
-/* No plate, no frame: the codes are cream modules drawn straight on the brown band,
-   so the band itself is the dark half of the pair — and the quiet zone, which is why
-   the SVGs carry neither. Both files are 80px, so the two codes are one matched
-   pair even though one is 37 modules and the other 41. */
+/* Без подложки: кремовые модули лежат на коричневой полосе; шаг модуля — 2px. */
 .qr-card { display: block; }
 .qr-card a {
   display: grid;
+  grid-template-rows: 82px auto;
   justify-items: center;
   gap: 12px;
   text-decoration: none;
   color: var(--white);
   border-radius: 6px;
 }
-.qr-card img { display: block; width: 80px; height: 80px; }
+.qr-card img { display: block; width: auto; height: auto; align-self: center; }
 .qr-card a:focus-visible { outline: 3px solid var(--orange); outline-offset: 6px; }
 .qr-label {
   display: inline-flex;

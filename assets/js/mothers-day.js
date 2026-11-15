@@ -1,4 +1,4 @@
-/* за Хлебом — /mothers-day/ (День матери 2026)
+/* за Хлебом — /mothers-day/ (День мамы 2026)
    Только логика кампании; тексты и ссылки — в mothers-day.config.js.
    Стиль как в main.js: ES5, без зависимостей, страница читаема и без этого файла.
 
@@ -459,13 +459,57 @@
     });
   }
 
-  /* Образец комментария: один и тот же текст копируется из блока «Как оформить предзаказ».
+  /* Комментарий к заказу собирается из даты, времени, имени и номера телефона.
      Цель не своя: это тот же шаг, что и копирование промокода, поэтому в Метрике
      считаем его как promo_copy_click с пометкой comment — иначе список целей
      растёт быстрее, чем ими пользуются. */
   var commentEl = doc.querySelector('[data-md-comment-text]');
   var commentCopy = doc.querySelector('[data-md-comment-copy]');
   var commentStatus = doc.querySelector('[data-md-comment-status]');
+  var commentDate = doc.querySelector('[data-md-comment-date]');
+  var commentTime = doc.querySelector('[data-md-comment-time]');
+  var commentName = doc.querySelector('[data-md-comment-name]');
+  var commentPhone = doc.querySelector('[data-md-comment-phone]');
+  var commentDates = {
+    '2026-11-26': '26 ноября',
+    '2026-11-27': '27 ноября',
+    '2026-11-28': '28 ноября',
+    '2026-11-29': '29 ноября'
+  };
+
+  if (commentTime) {
+    for (var minutes = 8 * 60; minutes <= 20 * 60 + 30; minutes += 15) {
+     var hour = Math.floor(minutes / 60);
+     var minute = minutes % 60;
+     var time = (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
+     commentTime.appendChild(el('option', '', time)).value = time;
+    }
+  }
+
+  function updateComment() {
+    if (!commentEl || !commentCopy || !commentDate || !commentTime || !commentName || !commentPhone) return;
+    var date = commentDate.value;
+    var time = commentTime.value;
+    var name = commentName.value.trim();
+    var phone = commentPhone.value.trim();
+    var validTime = /^(0[8-9]|1\d|20):(00|15|30|45)$/.test(time) && time <= '20:30';
+
+    if (!commentDates[date] || !validTime || !name || !phone) {
+     commentEl.textContent = 'Выберите дату и время, введите имя и номер телефона.';
+     commentCopy.disabled = true;
+     return;
+    }
+
+    commentEl.textContent = 'Дата получения: ' + commentDates[date] + ', к ' + time + '. Имя: ' + name + '. Номер телефона: ' + phone + '.';
+    commentCopy.disabled = false;
+  }
+
+  if (commentDate && commentTime && commentName && commentPhone) {
+    commentDate.addEventListener('change', updateComment);
+    commentTime.addEventListener('change', updateComment);
+    commentName.addEventListener('input', updateComment);
+    commentPhone.addEventListener('input', updateComment);
+  }
 
   function flashComment(message) {
     if (!commentStatus) return;
@@ -476,12 +520,13 @@
 
   if (commentCopy && commentEl) {
     commentCopy.addEventListener('click', function () {
+      if (commentCopy.disabled) return;
       var text = commentEl.textContent;
       reachGoal(GOALS.promoCopy, { place: 'comment' });
       copyText(text, function (ok) {
         flashComment(ok
-          ? 'Образец скопирован — вставьте его в «Комментарий» и поправьте дату и адрес.'
-          : 'Скопируйте образец вручную: ' + text);
+          ? 'Комментарий скопирован — вставьте его в поле «Комментарий» в приложении.'
+          : 'Не удалось скопировать автоматически — скопируйте комментарий вручную: ' + text);
       });
     });
   }
