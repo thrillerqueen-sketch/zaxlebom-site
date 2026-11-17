@@ -76,10 +76,13 @@
 </script>
 <script>
   /* До 18 ноября 2026 00:00 МСК страница кампании закрыта — показываем заглушку.
-     UTM-параметры в URL остаются, так что агентство может проверять ссылки. */
+     Режимы для сотрудников обходят заглушку, в том числе сохранённые в этой вкладке. */
   (function () {
     var target = Date.parse('2026-11-18T00:00:00+03:00');
-    if (Date.now() < target) {
+    var override = /[?&]mode=(preorder|showcase)\b/.test(location.search);
+    var saved = null;
+    try { saved = sessionStorage.getItem('zh-md-mode'); } catch (e) {}
+    if (Date.now() < target && !override && saved !== 'preorder' && saved !== 'showcase') {
       document.documentElement.setAttribute('data-md-coming-soon', 'true');
     }
   })();

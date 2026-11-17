@@ -73,7 +73,7 @@ window.ZH_MOTHERS_DAY = {
       priceValue: 1900,
       image: 'mothers-day-medovik',
       alt: 'Медовик с малиной: белый торт с розовыми цветами и надписью «Маме» на золотой подложке',
-      deeplink: 'zahlebom://dishes/3541'
+      deeplink: 'zahlebom://dishes/3689'
     },
     {
       id: 'bento',
@@ -86,7 +86,7 @@ window.ZH_MOTHERS_DAY = {
       priceValue: 1100,
       image: 'mothers-day-bento',
       alt: 'Бенто-медовик с малиной в белой коробке с окошком, перевязанной атласной лентой',
-      deeplink: 'zahlebom://dishes/3541'
+      deeplink: 'zahlebom://dishes/3690'
     },
     {
       id: 'shu',
@@ -99,7 +99,7 @@ window.ZH_MOTHERS_DAY = {
       priceValue: 700,
       image: 'mothers-day-shu',
       alt: 'Набор шоколадных пирожных Шу в белой коробке с крышкой, розы и надпись «Маме» на розовом фоне',
-      deeplink: 'zahlebom://dishes/3541'
+      deeplink: 'zahlebom://dishes/3566'
     }
   ],
 
@@ -116,7 +116,7 @@ window.ZH_MOTHERS_DAY = {
       vk: 'МАМАВК',
       instagram: 'ИНСТАМАМА',
       telegram: 'МАМАТГ',
-      vk_target: 'МАМАТАРГЕТ',
+      vk_target: 'МАМАДОРОГАЯ',
       offline: 'МАМАМИА',
       push: 'МАМА26',
       maps: 'МАМАКАРТА'
