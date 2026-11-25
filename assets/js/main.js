@@ -301,6 +301,50 @@
   renderStatus();
   window.setInterval(renderStatus, 60 * 1000);
 
+  /* ---------- 10a. запланированная смена текста кампании ----------
+     Слайд задаёт московское время старта и новый текст через data-атрибуты.
+     Обновляем его при загрузке, в момент старта и при возвращении во вкладку. */
+  var campaignTimer = null;
+  function refreshScheduledCampaigns() {
+    if (campaignTimer) {
+      window.clearTimeout(campaignTimer);
+      campaignTimer = null;
+    }
+
+    var schedules = doc.querySelectorAll('[data-campaign-start]');
+    var now = Date.now();
+    var nextStart = Infinity;
+    var previewAfter = /[?&]campaign=showcase\b/.test(window.location.search);
+    for (var c = 0; c < schedules.length; c++) {
+      var slide = schedules[c];
+      var start = Date.parse(slide.getAttribute('data-campaign-start'));
+      if (isNaN(start)) {
+        console.error('Invalid campaign start date:', slide.getAttribute('data-campaign-start'));
+        continue;
+      }
+      if (start > now && !previewAfter) {
+        if (start < nextStart) nextStart = start;
+        continue;
+      }
+
+      slide.classList.add('is-campaign-live');
+      var copy = slide.querySelectorAll('[data-campaign-after]');
+      for (var i = 0; i < copy.length; i++) {
+        copy[i].textContent = copy[i].getAttribute('data-campaign-after');
+      }
+      var hidden = slide.querySelectorAll('[data-campaign-hide-after]');
+      for (var h = 0; h < hidden.length; h++) hidden[h].hidden = true;
+    }
+
+    if (nextStart !== Infinity) {
+      campaignTimer = window.setTimeout(refreshScheduledCampaigns, nextStart - Date.now());
+    }
+  }
+  refreshScheduledCampaigns();
+  doc.addEventListener('visibilitychange', function () {
+    if (!doc.hidden) refreshScheduledCampaigns();
+  });
+
   /* ---------- 11. hero carousel ----------
      Автопрокрутка, кнопки-точки и свайп управляют лентой слайдов.
      При фокусе или касании таймер останавливается; при reduced motion автопрокрутки нет.

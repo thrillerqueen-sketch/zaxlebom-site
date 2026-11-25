@@ -231,12 +231,16 @@
 /* the Mother's Day cover is a different crop: keep the cake centred */
 .heroA-photo--md { object-position: 50% 42%; }
 
-/* the Mother's Day headline: a big "Скидка 10%" with a smaller line beneath */
+/* Заголовок кампании: крупная строка и пояснение под ней. */
 .heroA-sub {
   display: block;
   margin-top: .12em;
   font-size: clamp(1.35rem, 0.95rem + 1.8vw, 2.4rem);
   line-height: 1.1;
+}
+.hero-slide.is-campaign-live .heroA-sub {
+  font-size: clamp(1rem, .85rem + .5vw, 1.1rem);
+  line-height: 1.35;
 }
 
 /* Mother's Day dates line under the headline */

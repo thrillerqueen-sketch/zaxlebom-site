@@ -16,6 +16,7 @@
 <noscript><div><img src="https://mc.yandex.ru/watch/114211356" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
 <script>document.documentElement.classList.remove('no-js');</script>
+<script>if (/[?&]campaign=showcase\b/.test(location.search)) document.write('<meta name="robots" content="noindex">');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>за Хлебом — уютная пекарня в Тельмана и Колпино</title>
 <meta name="description" content="Свежий хлеб, торты и кофе — заказывайте в приложении «за Хлебом». Две пекарни: Тельмана, Октябрьская 5 и Колпино, Ленина 22. Доставка и самовывоз.">
@@ -245,23 +246,24 @@
      Auto-advances, but the dots and swipe let the user control it. -->
 <section class="hero hero-carousel" id="hero-a" data-carousel aria-roledescription="carousel" aria-label="Главное">
   <div class="hero-slides">
-    <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 из 2">
+    <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 из 2"
+         data-campaign-start="2026-11-26T00:00:00+03:00">
       <figure class="heroA-figure">
         <img class="heroA-photo heroA-photo--md" src="/assets/img/mothers-day-hero-wide-1440.webp"
              srcset="/assets/img/mothers-day-hero-wide-960.webp 960w, /assets/img/mothers-day-hero-wide-1440.webp 1440w, /assets/img/mothers-day-hero-wide-1920.webp 1920w"
              sizes="100vw" alt="Торт с розовыми цветами и надписью «Маме»" width="1440" height="960"
              loading="lazy" decoding="async">
-        <figcaption>День мамы · предзаказ до 25 ноября</figcaption>
+        <figcaption data-campaign-after="Праздничная коллекция ко Дню мамы">День мамы · предзаказ до 25 ноября</figcaption>
       </figure>
       <div class="wrap heroA-copy">
         <div class="heroA-head">
           <p class="kicker">День мамы</p>
-          <h2 class="heroA-title"><span class="heroA-line">Скидка <span class="accent">10%</span></span><span class="heroA-sub">на предзаказ подарков ко дню мамы</span></h2>
-          <p class="heroA-dates">с 18 по 25 ноября</p>
+          <h2 class="heroA-title"><span class="heroA-line" data-campaign-after="Праздничная коллекция">Скидка <span class="accent">10%</span></span><span class="heroA-sub" data-campaign-after="Уже на витринах — можно купить уже сейчас или оформить предзаказ на 29 ноября.">на предзаказ подарков ко дню мамы</span></h2>
+          <p class="heroA-dates" data-campaign-hide-after>с 18 по 25 ноября</p>
         </div>
         <div class="heroA-side">
           <div class="heroA-lead">
-            <p>Медовик с малиной, бенто-медовик и пирожные Шу — к празднику. Предзаказ в приложении «за Хлебом».</p>
+            <p data-campaign-after="Медовик с малиной, бенто-медовик и пирожные Шу поступили в продажу. Можно заказать в приложении, по телефону или в самих пекарнях.">Медовик с малиной, бенто-медовик и пирожные Шу — к празднику. Предзаказ в приложении «за Хлебом».</p>
           </div>
           <div class="heroA-actions">
             <a class="btn btn-solid btn-lg" href="/mothers-day/" data-cta="mothers-day-campaign">
@@ -689,6 +691,7 @@
     var cd = document.querySelector('.md-countdown');
     var btn = document.querySelector('a[data-cta="mothers-day-campaign"]');
     if (!dEl || !dwEl || !hEl || !mEl || !cd) return;
+    var timer = null;
 
     function dayWord(n) {
       n = Math.abs(n) % 100;
@@ -703,8 +706,9 @@
       var now = Date.now();
       var diff = target - now;
       if (diff <= 0) {
-        cd.parentNode.removeChild(cd);
+        if (cd.parentNode) cd.parentNode.removeChild(cd);
         if (btn) btn.textContent = 'Посмотреть варианты';
+        if (timer) window.clearInterval(timer);
         return;
       }
       var days = Math.floor(diff / 86400000);
@@ -716,7 +720,7 @@
       mEl.textContent = mins < 10 ? '0' + mins : mins;
     }
     tick();
-    window.setInterval(tick, 60000);
+    if (Date.now() < target) timer = window.setInterval(tick, 60000);
   })();
 </script>
 </body>

@@ -57,6 +57,7 @@
     var saved = storage.get(MODE_KEY);
     setMode(saved === 'preorder' || saved === 'showcase' ? saved : modeByDate(Date.now()));
   }
+  var isShowcase = root.getAttribute('data-md-mode') === 'showcase';
 
   /* Пока вкладка открыта, проверяем режим раз в минуту: в полночь 25 ноября
      предзаказ закрывается без перезагрузки страницы. */
@@ -191,6 +192,7 @@
      нет priceValue или percent, возвращает null — тогда карточка показывает одну
      цену, а не обещает скидку, которую не сможет посчитать. */
   function discountedPrice(product) {
+    if (isShowcase) return null;
     var value = product.priceValue;
     var percent = CONFIG.promo && CONFIG.promo.percent;
     if (typeof value !== 'number' || value <= 0 || !percent) return null;
@@ -476,14 +478,83 @@
     '2026-11-28': '28 ноября',
     '2026-11-29': '29 ноября'
   };
+  var commentDateKeys = ['2026-11-26', '2026-11-27', '2026-11-28', '2026-11-29'];
 
-  if (commentTime) {
-    for (var minutes = 8 * 60; minutes <= 20 * 60 + 30; minutes += 15) {
-     var hour = Math.floor(minutes / 60);
-     var minute = minutes % 60;
-     var time = (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
-     commentTime.appendChild(el('option', '', time)).value = time;
+  function moscowDateKey(now) {
+    if (window.Intl && Intl.DateTimeFormat.prototype.formatToParts) {
+      var formatted = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Europe/Moscow',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).formatToParts(now);
+      var parts = {};
+      for (var i = 0; i < formatted.length; i++) parts[formatted[i].type] = formatted[i].value;
+      return parts.year + '-' + parts.month + '-' + parts.day;
     }
+    var moscow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+    return moscow.getUTCFullYear() + '-' +
+      ('0' + (moscow.getUTCMonth() + 1)).slice(-2) + '-' +
+      ('0' + moscow.getUTCDate()).slice(-2);
+  }
+
+  function hasFutureCommentTime(date, nowMs) {
+    for (var minutes = 8 * 60; minutes <= 20 * 60 + 30; minutes += 15) {
+      var hour = Math.floor(minutes / 60);
+      var minute = minutes % 60;
+      var time = (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
+      if (Date.parse(date + 'T' + time + ':00+03:00') > nowMs) return true;
+    }
+    return false;
+  }
+
+  function refreshCommentTimes(now) {
+    if (!commentDate || !commentTime) return;
+    var date = commentDate.value;
+    var selectedTime = commentTime.value;
+    while (commentTime.options.length > 1) commentTime.remove(1);
+
+    var available = 0;
+    if (date && commentDates[date]) {
+      for (var minutes = 8 * 60; minutes <= 20 * 60 + 30; minutes += 15) {
+        var hour = Math.floor(minutes / 60);
+        var minute = minutes % 60;
+        var time = (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
+        if (Date.parse(date + 'T' + time + ':00+03:00') <= now.getTime()) continue;
+        var option = el('option', '', time);
+        option.value = time;
+        commentTime.appendChild(option);
+        available++;
+      }
+    }
+
+    commentTime.value = selectedTime;
+    if (commentTime.value !== selectedTime) commentTime.selectedIndex = 0;
+    commentTime.disabled = !date || available === 0;
+  }
+
+  function refreshCommentDates() {
+    if (!commentDate || !commentTime) return;
+    var now = new Date();
+    var nowMs = now.getTime();
+    var today = moscowDateKey(now);
+    var selectedDate = commentDate.value;
+    while (commentDate.options.length > 1) commentDate.remove(1);
+
+    var available = 0;
+    for (var i = 0; i < commentDateKeys.length; i++) {
+      var date = commentDateKeys[i];
+      if (date < today || !hasFutureCommentTime(date, nowMs)) continue;
+      var option = el('option', '', commentDates[date]);
+      option.value = date;
+      commentDate.appendChild(option);
+      available++;
+    }
+
+    commentDate.value = selectedDate;
+    if (commentDate.value !== selectedDate) commentDate.selectedIndex = 0;
+    commentDate.disabled = available === 0;
+    refreshCommentTimes(now);
   }
 
   function updateComment() {
@@ -492,10 +563,12 @@
     var time = commentTime.value;
     var name = commentName.value.trim();
     var phone = commentPhone.value.trim();
-    var validTime = /^(0[8-9]|1\d|20):(00|15|30|45)$/.test(time) && time <= '20:30';
+    var validTime = /^(0[8-9]|1\d|20):(00|15|30|45)$/.test(time) && time <= '20:30' &&
+      Date.parse(date + 'T' + time + ':00+03:00') > Date.now() &&
+      date >= moscowDateKey(new Date());
 
     if (!commentDates[date] || !validTime || !name || !phone) {
-     commentEl.textContent = 'Выберите дату и время, введите имя и номер телефона.';
+     commentEl.textContent = 'Выберите будущие дату и время, введите имя и номер телефона.';
      commentCopy.disabled = true;
      return;
     }
@@ -505,10 +578,18 @@
   }
 
   if (commentDate && commentTime && commentName && commentPhone) {
-    commentDate.addEventListener('change', updateComment);
+    commentDate.addEventListener('change', function () {
+      refreshCommentTimes(new Date());
+      updateComment();
+    });
     commentTime.addEventListener('change', updateComment);
     commentName.addEventListener('input', updateComment);
     commentPhone.addEventListener('input', updateComment);
+    refreshCommentDates();
+    window.setInterval(function () {
+      refreshCommentDates();
+      updateComment();
+    }, 15000);
   }
 
   function flashComment(message) {
@@ -520,6 +601,7 @@
 
   if (commentCopy && commentEl) {
     commentCopy.addEventListener('click', function () {
+      updateComment();
       if (commentCopy.disabled) return;
       var text = commentEl.textContent;
       reachGoal(GOALS.promoCopy, { place: 'comment' });
@@ -545,9 +627,10 @@
 
   /* ---------- 7. условия, пекарни и режим витрины ---------- */
   var termsList = doc.querySelector('[data-md-terms]');
-  if (termsList && CONFIG.terms) {
-    for (var t = 0; t < CONFIG.terms.length; t++) {
-      termsList.appendChild(el('li', '', CONFIG.terms[t]));
+  var terms = isShowcase && CONFIG.showcase ? CONFIG.showcase.terms : CONFIG.terms;
+  if (termsList && terms) {
+    for (var t = 0; t < terms.length; t++) {
+      termsList.appendChild(el('li', '', terms[t]));
     }
   }
 
@@ -574,38 +657,11 @@
     }
   }
 
-  /* Кнопка первого экрана и подпись под ней одни во всех режимах: «Выбрать подарок»
-     и «скидка 10% по промокоду» стоят в HTML. В режиме витрины меняем только адрес —
-     коллекция скрыта, поэтому кнопка ведёт к блоку витрины, а не в пустой #collection. */
-  var heroCta = doc.querySelector('[data-md-hero-cta]');
-  var isShowcase = root.getAttribute('data-md-mode') === 'showcase';
-  if (heroCta && isShowcase) {
-    heroCta.setAttribute('href', '#showcase');
-    heroCta.setAttribute('data-goal', 'showcase_open_click');
-  }
-
-  /* Ссылка на раздел меню с витриной. Пока её нет, кнопка ведёт в магазин
-     приложения по платформе — так пользователь всё равно попадает в меню. */
-  var showcaseLink = doc.querySelector('[data-md-showcase-link]');
   var showcase = CONFIG.showcase || {};
-  var ua = navigator.userAgent || '';
-  var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  var storeURL = isIOS ? CONFIG.contact.appStore : CONFIG.contact.appPlay;
-
-  if (showcaseLink) {
-    if (showcase.deeplink) {
-      showcaseLink.href = showcase.deeplink;
-    } else {
-      showcaseLink.href = storeURL;
-      showcaseLink.setAttribute('rel', 'noopener');
-    }
-  }
-  var showcaseTitle = doc.querySelector('[data-md-showcase-title]');
-  if (showcaseTitle && showcase.title) showcaseTitle.textContent = showcase.title;
-  var showcaseLead = doc.querySelector('[data-md-showcase-lead]');
-  if (showcaseLead && showcase.lead) showcaseLead.textContent = showcase.lead;
-  var showcaseKicker = doc.querySelector('[data-md-showcase-kicker]');
-  if (showcaseKicker && showcase.kicker) showcaseKicker.textContent = showcase.kicker;
+  var heroNote = doc.querySelector('[data-md-hero-note]');
+  if (isShowcase && heroNote && showcase.heroNote) heroNote.textContent = showcase.heroNote;
+  var saleMessage = doc.querySelector('[data-md-sale-message]');
+  if (isShowcase && saleMessage && showcase.saleMessage) saleMessage.textContent = showcase.saleMessage;
 
   /* ---------- 8. год ---------- */
   var year = doc.getElementById('mdYear');

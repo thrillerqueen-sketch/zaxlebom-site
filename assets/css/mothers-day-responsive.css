@@ -9,15 +9,14 @@
 .md:not([data-md-mode]) .md-howto,
 [data-md-mode="preorder"] .md-collection,
 [data-md-mode="preorder"] .md-promo,
-[data-md-mode="preorder"] .md-howto { display: block; }
-
-.md:not([data-md-mode]) .md-showcase,
-[data-md-mode="preorder"] .md-showcase { display: none; }
-
-[data-md-mode="showcase"] .md-showcase { display: block; }
+[data-md-mode="preorder"] .md-howto,
 [data-md-mode="showcase"] .md-collection,
 [data-md-mode="showcase"] .md-promo,
-[data-md-mode="showcase"] .md-howto { display: none; }
+[data-md-mode="showcase"] .md-howto { display: block; }
+
+[data-md-mode="showcase"] .md-promo-card[data-md-promo],
+[data-md-mode="showcase"] .md-howto .md-preorder-promo-step { display: none; }
+[data-md-mode="showcase"] .md-promo-card.md-sale-card { display: grid; }
 
 
 

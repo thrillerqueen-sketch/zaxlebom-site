@@ -112,8 +112,13 @@ html[data-md-coming-soon] body.md > #main { flex: 1 0 auto; }
   gap: 12px 20px;
   margin-top: clamp(22px, 3vw, 30px);
 }
-.md-hero-note { font-size: var(--t-nav); color: var(--muted); }
+.md-hero-note { order: 1; font-size: var(--t-nav); color: var(--muted); }
 .md-hero-note strong { color: var(--md-rose); font-weight: 700; }
+[data-md-mode="showcase"] .md-hero-actions {
+  flex-direction: column;
+  align-items: flex-start;
+}
+[data-md-mode="showcase"] .md-hero-note { order: -1; }
 
 /* ---------- карточки коллекции ----------
    Три колонки, как у витрины на главной, но подпись стоит ПОД фото,
@@ -247,6 +252,11 @@ html[data-md-coming-soon] body.md > #main { flex: 1 0 auto; }
 /* Без кода первая колонка не нужна: текст занимает всю ширину блока. */
 .md-promo-card[data-promo="none"] { grid-template-columns: 1fr; }
 .md-promo-card[data-promo="none"] .md-promo-percent { display: none; }
+.md-promo-card.md-sale-card {
+  display: none;
+  grid-template-columns: 1fr;
+  border-style: solid;
+}
 
 .md-promo-percent {
   font-family: var(--font-num);
@@ -427,34 +437,14 @@ html[data-md-coming-soon] body.md > #main { flex: 1 0 auto; }
 .md:not([data-md-mode]) .md-howto,
 [data-md-mode="preorder"] .md-collection,
 [data-md-mode="preorder"] .md-promo,
-[data-md-mode="preorder"] .md-howto { display: block; }
-
-.md:not([data-md-mode]) .md-showcase,
-[data-md-mode="preorder"] .md-showcase { display: none; }
-
-[data-md-mode="showcase"] .md-showcase { display: block; }
-
+[data-md-mode="preorder"] .md-howto,
 [data-md-mode="showcase"] .md-collection,
 [data-md-mode="showcase"] .md-promo,
-[data-md-mode="showcase"] .md-howto { display: none; }
+[data-md-mode="showcase"] .md-howto { display: block; }
 
-.md-showcase { background: var(--cream-2); }
-.md-showcase-card {
-  padding: clamp(24px, 4vw, 48px);
-  border-radius: var(--radius);
-  background: var(--white);
-  border: 1px solid var(--line);
-}
-.md-showcase-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 22px;
-  margin-top: 26px;
-}
-.md-showcase-note { font-size: var(--t-body); color: var(--muted); }
-.md-showcase-note a { color: var(--brown); font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--md-rose-line); }
-.md-showcase-note a:hover { border-bottom-color: var(--md-rose); }
+[data-md-mode="showcase"] .md-promo-card[data-md-promo],
+[data-md-mode="showcase"] .md-howto .md-preorder-promo-step { display: none; }
+[data-md-mode="showcase"] .md-promo-card.md-sale-card { display: grid; }
 
 /* ---------- альтернативные способы ---------- */
 .md-alt { background: var(--cream); }

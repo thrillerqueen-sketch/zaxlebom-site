@@ -24,7 +24,7 @@
 <script>document.documentElement.classList.remove('no-js');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Для самой любимой — День мамы 2026 в пекарне «за Хлебом»</title>
-<meta name="description" content="Праздничная коллекция ко Дню мамы: медовик с малиной, бенто-медовик и набор пирожных Шу. Предзаказ в приложении «за Хлебом» со скидкой 10%.">
+<meta name="description" content="Праздничная коллекция ко Дню мамы: медовик с малиной, бенто-медовик и набор пирожных Шу. Заказ в приложении «за Хлебом», по телефону и в пекарнях.">
 <link rel="canonical" href="https://zaxlebom.ru/mothers-day/">
 <meta name="theme-color" content="#5a3327">
 <meta property="og:type" content="website">
@@ -32,7 +32,7 @@
 <meta property="og:locale" content="ru_RU">
 <meta property="og:url" content="https://zaxlebom.ru/mothers-day/">
 <meta property="og:title" content="Для самой любимой — День мамы 2026">
-<meta property="og:description" content="Медовик, бенто и пирожные Шу к празднику. Предзаказ в приложении, скидка 10%.">
+<meta property="og:description" content="Медовик, бенто и пирожные Шу к празднику. Заказ в приложении, по телефону и в пекарнях.">
 <meta property="og:image" content="https://zaxlebom.ru/assets/img/mothers-day-hero-wide-1440.webp">
 <meta property="og:image:width" content="1440">
 <meta property="og:image:height" content="810">
@@ -69,8 +69,8 @@
     var saved = null;
     try { saved = sessionStorage.getItem('zh-md-mode'); } catch (e) {}
     if (saved && MEDIA[saved]) { root.setAttribute('data-md-mode', MEDIA[saved]); return; }
-    /* 25.11.2026 23:59:59 МСК = 20:59:59 UTC */
-    var ended = Date.now() >= Date.UTC(2026, 10, 25, 20, 59, 59);
+    /* 26.11.2026 00:00 МСК = 21:00 UTC on 25 November */
+    var ended = Date.now() >= Date.UTC(2026, 10, 25, 21, 0, 0);
     root.setAttribute('data-md-mode', ended ? 'showcase' : 'preorder');
   })();
 </script>
@@ -236,8 +236,8 @@
     <div class="md-hero-side">
       <p class="md-hero-lead">Праздничная коллекция ко Дню мамы: медовик с малиной, бенто в подарочной коробке и пирожные Шу.</p>
       <div class="md-hero-actions">
-        <a class="btn btn-solid btn-lg" href="#collection" data-md-hero-cta>Выбрать подарок</a>
         <span class="md-hero-note" data-md-hero-note>скидка <strong>10%</strong> по промокоду</span>
+        <a class="btn btn-solid btn-lg" href="#collection" data-md-hero-cta>Выбрать подарок</a>
       </div>
     </div>
   </div>
@@ -263,7 +263,8 @@
   </div>
 </section>
 
-<!-- Блок 3. Скидка и промокод.
+<!-- Блок 3. До 26 ноября здесь показывается предложение предзаказа;
+     с 26 ноября — информация о праздничной коллекции в продаже.
      data-promo="none" — исходное состояние: без JS пустого блока не бывает.
      data-promo="ready" ставит mothers-day.js, когда код найден по UTM: тогда
      появляется крупный «−10%» и панель с кодом. Правила — в mothers-day.css. -->
@@ -285,13 +286,13 @@
         <p class="md-promo-status" data-md-copy-status role="status" aria-live="polite"></p>
       </div>
     </div>
+    <div class="md-promo-card md-sale-card" data-md-sale-info>
+      <p class="md-promo-text" data-md-sale-message>Праздничная коллекция уже поступила в продажу. Можно заказать в приложении, по телефону или прийти и купить с витрины. По-прежнему можно оформить предзаказ на 29 ноября. Для этого следуйте инструкции ниже.</p>
+    </div>
   </div>
 </section>
 
-<!-- Блок 4. Как оформить предзаказ.
-     Задача блока — научить, а не предупредить: поэтому это шаги «что сделать»,
-     а не рассказ о том, чего в приложении нет. Механику заказа повторять в
-     условиях не нужно — список условий лежит в mothers-day.config.js. -->
+<!-- Блок 4. Как оформить предзаказ. -->
 <section class="section md-howto" id="howto">
   <div class="wrap">
     <div class="md-howto-inner">
@@ -299,10 +300,10 @@
         <p class="md-kicker">Предзаказ</p>
         <h2>Как оформить <span class="accent">предзаказ</span></h2>
         <ol class="md-steps" role="list">
-          <li>Выберите дату с 26 по 29 ноября, удобное время получения, введите имя и номер телефона, скопируйте комментарий.</li>
+          <li>Выберите удобную дату до 29 ноября включительно, удобное время получения, введите имя и номер телефона, скопируйте комментарий.</li>
           <li>Откройте приложение «за Хлебом» и добавьте в корзину интересующую позицию.</li>
           <li>В корзине вставьте скопированный комментарий в поле <strong>«Комментарий»</strong>. Адрес доставки укажите при оформлении; самовывоз доступен только на Октябрьской 5.</li>
-          <li>Примените промокод в корзине на этапе оплаты и отправьте заказ.</li>
+          <li class="md-preorder-promo-step">Примените промокод в корзине на этапе оплаты и отправьте заказ.</li>
           <li>Дождитесь звонка для подтверждения заказа.</li>
         </ol>
       </div>
@@ -338,23 +339,6 @@
   </div>
 </section>
 
-<!-- Режим 2. После предзаказа: что делать с 26 ноября. Показывается только при
-     data-md-mode="showcase" — правило в mothers-day.css. Тексты (в том числе
-     заголовок и подпись) приходят из mothers-day.config.js, поле showcase. -->
-<section class="section md-showcase" id="showcase">
-  <div class="wrap">
-    <div class="md-showcase-card">
-      <p class="md-kicker" data-md-showcase-kicker>Предзаказ закрыт</p>
-      <h2 data-md-showcase-title>Праздничные десерты на витрине и в доставке с 26-го ноября</h2>
-      <p class="section-lead" data-md-showcase-lead>Предзаказ на День мамы завершён. С 26 ноября медовик с малиной, бенто-медовик и пирожные Шу можно купить в пекарне или заказать с доставкой — в приложении «за Хлебом».</p>
-      <div class="md-showcase-actions">
-        <a class="btn btn-solid btn-lg" href="#" data-md-showcase-link data-goal="showcase_open_click">Открыть меню приложения</a>
-        <span class="md-showcase-note">или закажите по телефону — <a href="tel:+78002015777" data-goal="phone_order_click">8 800 201-57-77</a></span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- Блок 5. Другие способы заказа: работают, даже если приложение не открылось.
      Это страховка, а не разбор поломки: ни слова о том, что что-то не работает. -->
 <section class="section md-alt" id="alt">
@@ -368,7 +352,7 @@
     <div class="md-alt-grid">
       <article class="md-alt-card md-alt-phone">
         <h3>Заказать по телефону</h3>
-        <p class="md-alt-text">Позвоните по бесплатному номеру, выберите удобный способ получить заказ. Мы с радостью сориентируем вас по срокам и ответим на любые другие вопросы. Не забудьте назвать промокод.</p>
+        <p class="md-alt-text">Позвоните по бесплатному номеру, выберите удобный способ получить заказ. Мы с радостью сориентируем вас по срокам и ответим на любые другие вопросы.</p>
         <a class="btn btn-solid btn-tel" href="tel:+78002015777" data-goal="phone_order_click" data-goal-param="alt">
           <svg width="20" height="20" aria-hidden="true"><use href="#i-phone"></use></svg>8 800 201-57-77
         </a>
